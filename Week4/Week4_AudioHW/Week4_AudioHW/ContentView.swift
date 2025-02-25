@@ -8,14 +8,16 @@
 import SwiftUI
 import AVFoundation
 
+// Main App Structure
 struct Audio_AppApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView() // The main screen of the app
+            HomeView()
         }
     }
 }
 
+// Home Screen displaying real-time clock with Enhanced UI
 struct HomeView: View {
     @State private var currentTime = Date()
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -23,102 +25,71 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background Gradient
-                LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
+                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .topLeading, endPoint: .bottomTrailing)
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack(spacing: 20) {
-                    // Local Time Display
-                    TimeDisplayView(title: "Local Time", time: FormattedTime(timeZone: .current))
-                    
-                    // Display World Clocks
-                    VStack(spacing: 15) {
-                        ForEach(worldClockData) { clock in
-                            WorldClockView(city: clock.city, timeZone: clock.timeZone, currentTime: $currentTime)
-                        }
+                    VStack {
+                        Text("Local Time")
+                            .font(.title)
+                            .bold()
+                            .foregroundColor(.white)
+                        
+                        Text(FormattedTime(timeZone: .current))
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(width: 280)
+                            .background(Color.white.opacity(0.2))
+                            .cornerRadius(20)
+                            .shadow(radius: 5)
                     }
                     
-                    // Navigation to Audio Player
+                    VStack(spacing: 15) {
+                        WorldClockView(city: "New York", timeZone: "America/New_York", currentTime: $currentTime)
+                        WorldClockView(city: "London", timeZone: "Europe/London", currentTime: $currentTime)
+                        WorldClockView(city: "India", timeZone: "Asia/Kolkata", currentTime: $currentTime)
+                        WorldClockView(city: "Australia", timeZone: "Australia/Sydney", currentTime: $currentTime)
+                    }
+                    
                     NavigationLink(destination: AudioPlayerView()) {
-                        ButtonView(text: "Go to Audio Player", colors: [Color.red, Color.orange])
+                        Text("Go to Audio Player")
+                            .font(.title2)
+                            .padding()
+                            .frame(width: 240)
+                            .background(LinearGradient(gradient: Gradient(colors: [Color.red, Color.orange]), startPoint: .leading, endPoint: .trailing))
+                            .foregroundColor(.white)
+                            .cornerRadius(16)
+                            .shadow(radius: 5)
+                            .scaleEffect(1.05)
+                            .animation(.easeInOut(duration: 0.2), value: true)
                     }
                 }
             }
             .navigationTitle("World Clocks")
-            .onReceive(timer) { _ in currentTime = Date() }
+            .onReceive(timer) { _ in
+                currentTime = Date()
+            }
         }
+    }
+    
+    func FormattedTime(timeZone: TimeZone) -> String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.timeZone = timeZone
+        return formatter.string(from: currentTime)
     }
 }
 
+// Reusable World Clock Component
 struct WorldClockView: View {
     var city: String
     var timeZone: String
+    
     @Binding var currentTime: Date
     
     var body: some View {
-        TimeDisplayView(title: city, time: FormattedTime(timeZone: TimeZone(identifier: timeZone)!))
-    }
-}
-
-struct AudioPlayerView: View {
-    @State private var audioPlayer: AVAudioPlayer?
-    @State private var isPlaying = false
-    
-    var body: some View {
-        ZStack {
-            // Background Gradient for Audio Player
-            LinearGradient(colors: [.blue.opacity(0.6), .purple.opacity(0.7)], startPoint: .top, endPoint: .bottom)
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 30) {
-                Text("Relax & Enjoy")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                
-                // Play/Pause Button
-                Button(action: togglePlayback) {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                        .resizable()
-                        .frame(width: 70, height: 70)
-                        .foregroundColor(.white)
-                        .background(Circle().fill(Color.blue.opacity(0.8)).frame(width: 120, height: 120))
-                        .shadow(radius: 10)
-                }
-            }
-        }
-        .onAppear(perform: loadAudio)
-    }
-    
-    func loadAudio() {
-        // Load the audio file from the app bundle
-        if let path = Bundle.main.path(forResource: "audio", ofType: "mp3") {
-            let url = URL(fileURLWithPath: path)
-            do { audioPlayer = try AVAudioPlayer(contentsOf: url) }
-            catch { print("Error loading audio file: \(error.localizedDescription)") }
-        }
-    }
-    
-    func togglePlayback() {
-        // Toggle between play and pause
-        guard let player = audioPlayer else { return }
-        isPlaying.toggle()
-        
-        if isPlaying {
-            player.play()
-        } else {
-            player.pause()
-        }
-    }
-}
-
-// A reusable component for displaying time
-struct TimeDisplayView: View {
-    var title: String
-    var time: String
-    
-    var body: some View {
-        Text("\(title): \(time)")
+        Text("\(city): " + FormattedTime(timeZone: TimeZone(identifier: timeZone)!))
             .font(.title2)
             .foregroundColor(.white)
             .padding()
@@ -127,46 +98,58 @@ struct TimeDisplayView: View {
             .cornerRadius(16)
             .shadow(radius: 3)
     }
-}
-
-// A reusable button component
-struct ButtonView: View {
-    var text: String
-    var colors: [Color]
     
-    var body: some View {
-        Text(text)
-            .font(.title2)
-            .padding()
-            .frame(width: 240)
-            .background(LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing))
-            .foregroundColor(.white)
-            .cornerRadius(16)
-            .shadow(radius: 5)
-            .scaleEffect(1.05)
-            .animation(.easeInOut(duration: 0.2), value: true)
+    func FormattedTime(timeZone: TimeZone) -> String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        formatter.timeZone = timeZone
+        return formatter.string(from: currentTime)
     }
 }
 
-// Data model for world clocks
-struct WorldClock: Identifiable {
-    var id = UUID()
-    var city: String
-    var timeZone: String
-}
-
-// List of cities with their respective time zones
-let worldClockData = [
-    WorldClock(city: "New York", timeZone: "America/New_York"),
-    WorldClock(city: "London", timeZone: "Europe/London"),
-    WorldClock(city: "India", timeZone: "Asia/Kolkata"),
-    WorldClock(city: "Australia", timeZone: "Australia/Sydney")
-]
-
-// Function to format time for different time zones
-func FormattedTime(timeZone: TimeZone) -> String {
-    let formatter = DateFormatter()
-    formatter.timeStyle = .medium
-    formatter.timeZone = timeZone
-    return formatter.string(from: Date())
+// Audio Player View
+struct AudioPlayerView: View {
+    @State private var audioPlayer: AVAudioPlayer?
+    @State private var isPlaying = false
+    
+    var body: some View {
+        VStack {
+            Text("Audio Player")
+                .font(.largeTitle)
+                .padding()
+            
+            Button(action: togglePlayback) {
+                Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(.blue)
+            }
+        }
+        .onAppear {
+            loadAudio()
+        }
+    }
+    
+    func loadAudio() {
+        if let path = Bundle.main.path(forResource: "audio", ofType: "mp3") {
+            let url = URL(fileURLWithPath: path)
+            do {
+                audioPlayer = try AVAudioPlayer(contentsOf: url)
+            } catch {
+                print("Error loading audio file: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func togglePlayback() {
+        if let player = audioPlayer {
+            if player.isPlaying {
+                player.pause()
+                isPlaying = false
+            } else {
+                player.play()
+                isPlaying = true
+            }
+        }
+    }
 }
