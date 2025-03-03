@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AB99A6822D756D02009D1389 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = AB99A6812D756CFC009D1389 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		AB99A6812D756CFC009D1389 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C2FC1B592D6D898C001391D8 /* Week4_AudioHW.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Week4_AudioHW.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -32,6 +37,7 @@
 		C2FC1B502D6D898C001391D8 = {
 			isa = PBXGroup;
 			children = (
+				AB99A6812D756CFC009D1389 /* README.md */,
 				C2FC1B5B2D6D898C001391D8 /* Week4_AudioHW */,
 				C2FC1B5A2D6D898C001391D8 /* Products */,
 			);
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB99A6822D756D02009D1389 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
