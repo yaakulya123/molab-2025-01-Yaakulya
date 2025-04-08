@@ -11,7 +11,7 @@ FireCards is a flashcard application built with SwiftUI and Firebase that helps 
 
 ## Screenshots
 
-image.png
+![image](https://github.com/user-attachments/assets/9e01af3f-eec4-4789-8941-d56ce7a7b9d2)
 
 ## Technologies Used
 
