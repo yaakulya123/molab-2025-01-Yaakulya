@@ -38,6 +38,7 @@ The app initializes Firebase in the main app file:
 init() {
     FirebaseApp.configure()
 }
+```
 
 ## Challenges and Solutions
 ### 1. Bundle ID Mismatch
