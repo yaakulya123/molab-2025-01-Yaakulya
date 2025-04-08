@@ -1,4 +1,4 @@
-# FireCards
+# My First Backend Project - FireCards
 
 FireCards is a flashcard application built with SwiftUI and Firebase that helps users memorize information through digital flashcards. Users can create, view, and mark cards as memorized, with all data synchronized to Firebase in real-time.
 
