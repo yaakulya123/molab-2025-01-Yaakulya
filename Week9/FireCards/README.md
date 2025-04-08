@@ -44,28 +44,37 @@ init() {
 ### 1. Bundle ID Mismatch
 One of the most frustrating issues I encountered was a subtle mismatch between bundle identifiers:
 
-Problem: The Firebase configuration in GoogleService-Info.plist had a different bundle ID than what was set in my Xcode project:
+**Problem:**
+The Firebase configuration in GoogleService-Info.plist had a different bundle ID than what was set in my Xcode project:
 
+```xml
 // In GoogleService-Info.plist
 <key>BUNDLE_ID</key>
 <string>com.ys5298.FireCards</string>
 
 // In Xcode project settings
 Bundle Identifier: com.ys5289.FireCards
+```
 
 This tiny difference (5298 vs 5289) prevented Firebase from connecting properly, but the error messages weren't clear about the cause.
 
-Solution: I carefully compared the bundle IDs and updated the project settings to match the Firebase configuration:
+**Solution:**
+I carefully compared the bundle IDs and updated the project settings to match the Firebase configuration:
 
+```swift
 // In Xcode:
 // Project > Target > General > Bundle Identifier
 // Changed from com.ys5289.FireCards to com.ys5298.FireCards
+```
 
-### 3. Missing Firebase Dependencies
-Problem: Initially, the app would crash with cryptic errors because I hadn't properly set up all the required Firebase dependencies.
+### 2. Missing Firebase Dependencies
+**Problem:**
+Initially, the app would crash with cryptic errors because I hadn't properly set up all the required Firebase dependencies.
 
-Solution: I added all necessary Firebase packages to my project using Swift Package Manager:
+**Solution:**
+I added all necessary Firebase packages to my project using Swift Package Manager:
 
+```swift
 // In Xcode:
 // File > Add Packages...
 // Added:
@@ -74,24 +83,30 @@ Solution: I added all necessary Firebase packages to my project using Swift Pack
 // - FirebaseAuth
 // - FirebaseFirestore
 // - FirebaseFirestoreSwift
+```
 
 
+### 3. Firestore Document ID Handling
+**Problem:**
+When fetching cards from Firestore, I initially lost the document IDs, which made updating cards impossible:
 
-### 4. Firestore Document ID Handling
-Problem: When fetching cards from Firestore, I initially lost the document IDs, which made updating cards impossible:
-
+```swift
 self.cards = documents.compactMap { document -> Card? in
     return Card.from(dictionary: document.data())
 }
+```
 
-Solution: I modified the code to preserve the document ID:
+**Solution:**
+I modified the code to preserve the document ID:
 
+```swift
 self.cards = documents.compactMap { document -> Card? in
     let data = document.data()
     var card = Card.from(dictionary: data)
     card?.id = document.documentID
     return card
 }
+```
 
 ## Future Improvements
 - Add categories for organizing cards
